@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Missão Decimal</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#ffffff; --ink:#172033; --muted:#65708a;
+  --primary:#3759d7; --primary2:#273fa6; --ok:#1f8a55; --warn:#b66a00;
+  --bad:#b63b45; --line:#dfe5f1; --soft:#eef2ff; --shadow:0 12px 34px rgba(27,42,89,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1160px;margin:auto;padding:14px 20px;display:flex;align-items:center;gap:16px}
+.brand{font-weight:900;letter-spacing:.2px}.brand span{color:var(--primary)}
+.progress-wrap{flex:1}.progress{height:10px;background:#e7ebf5;border-radius:999px;overflow:hidden}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--primary),#6b7df0);transition:.35s}
+.progress-label{font-size:12px;color:var(--muted);margin-top:4px;text-align:right}
+.app{max-width:1160px;margin:0 auto;padding:26px 20px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:26px}
+.grid{display:grid;gap:18px}.grid-2{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:repeat(3,1fr)}
+.hero{padding:36px}.eyebrow{font-weight:800;color:var(--primary);font-size:13px;text-transform:uppercase;letter-spacing:1.1px}.hero h1{font-size:clamp(36px,6vw,68px);line-height:.95;margin:12px 0}.hero p{font-size:19px;color:var(--muted);max-width:760px}
+.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:800;background:var(--primary);color:#fff;box-shadow:0 8px 18px rgba(55,89,215,.22)}
+.btn:hover{background:var(--primary2)}.btn.secondary{background:#fff;color:var(--primary);border:1px solid #cdd6ff;box-shadow:none}.btn.ghost{background:transparent;color:var(--muted);box-shadow:none;border:1px solid var(--line)}
+.btn.warn{background:#8a5a00}.btn.bad{background:var(--bad)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.field{display:flex;flex-direction:column;gap:7px}.field label{font-weight:800}.field input,.field select{padding:13px 14px;border:1px solid #cfd7e7;border-radius:12px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #dfe5ff}
+.module-list{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}.module{padding:16px;border-radius:18px;border:1px solid var(--line);background:#fff}.module.active{border-color:#aab8ff;background:#f2f4ff}.module.done{border-color:#bfe2cf;background:#f2fbf6}.module .num{font-size:12px;font-weight:900;color:var(--muted)}.module strong{display:block;margin-top:6px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:var(--soft);font-weight:800;font-size:13px;color:var(--primary)}
+.lesson-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.lesson-head h2{font-size:34px;margin:8px 0}.muted{color:var(--muted)}
+.math{font-size:clamp(30px,6vw,54px);font-weight:900;letter-spacing:.4px;text-align:center;padding:28px 12px;border-radius:18px;background:#f7f8fd;border:1px solid var(--line);margin:18px 0}
+.algorithm{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:28px;line-height:1.35;background:#101729;color:#fff;border-radius:18px;padding:20px;white-space:pre-wrap}
+.tip{border-left:5px solid var(--primary);background:#f3f5ff;padding:16px 18px;border-radius:12px;margin:14px 0}.tip strong{display:block;margin-bottom:4px}
+.question-card{margin-top:18px}.answer-row{display:flex;gap:10px;align-items:stretch}.answer-row input{flex:1;min-width:0;padding:16px;border:2px solid #ccd5e9;border-radius:14px;font-size:22px;font-weight:800}.answer-row input:focus{outline:none;border-color:var(--primary)}
+.feedback{min-height:26px;margin-top:12px;font-weight:800}.feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}.feedback.warn{color:var(--warn)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}.stat b{font-size:28px}.stat small{display:block;color:var(--muted);margin-top:4px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{border:2px solid var(--line);background:#fff;border-radius:14px;padding:14px;font-weight:800;color:var(--ink)}.choice:hover{border-color:#aebaff;background:#f8f9ff}
+.small{font-size:13px}.section-title{font-size:24px;margin:0 0 10px}.hidden{display:none!important}.pill-row{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-weight:700}.pill.good{background:#f1fbf5;color:var(--ok);border-color:#c9ead7}
+.footer-note{margin-top:22px;color:var(--muted);font-size:12px}.privacy{background:#fff8e8;border:1px solid #f1dca8;padding:12px 14px;border-radius:12px;color:#785113}
+.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:11px;border-bottom:1px solid var(--line);font-size:14px}.table th{color:var(--muted)}
+.kbd{font-family:ui-monospace,monospace;background:#eef1f7;border:1px solid #d7deea;border-bottom-width:3px;border-radius:7px;padding:1px 7px;font-size:.9em}
+@media (max-width:850px){.grid-2,.grid-3{grid-template-columns:1fr}.module-list{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.lesson-head{flex-direction:column}.topbar-inner{align-items:flex-start}.progress-wrap{width:100%}}
+@media (max-width:520px){.app{padding:16px 12px 32px}.card{padding:18px;border-radius:18px}.hero{padding:24px 18px}.module-list{grid-template-columns:1fr}.choice-grid{grid-template-columns:1fr}.answer-row{flex-direction:column}.math{font-size:34px}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="topbar hidden" id="topbar">
+  <div class="topbar-inner">
+    <div class="brand">Missão <span>Decimal</span></div>
+    <div class="progress-wrap">
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="progress-label" id="progressLabel">0% concluído</div>
+    </div>
+    <button class="btn ghost small" id="restartBtn">Reiniciar</button>
+  </div>
+</header>
+<main class="app" id="app"></main>
+<script>
+'use strict';
+
+const CONFIG = {
+  // Depois de publicar o arquivo Code.gs como Web App, cole a URL aqui.
+  REMOTE_ENDPOINT: 'https://script.google.com/macros/s/AKfycbwqBOjyc8G1epvrx8iJQO_ARvnyeGXAl6_HuAQzYsxHMuVe2EOJMyN3kSEAelw0ViGP/exec',
+  APP_VERSION: '1.0.0',
+  QUESTIONS_PER_MODULE: 5,
+  STORAGE_KEY: 'missao_decimal_v1'
+};
+
+const MODULES = [
+  {id:'add', title:'Adição', icon:'＋'},
+  {id:'sub', title:'Subtração', icon:'−'},
+  {id:'mul', title:'Multiplicação', icon:'×'},
+  {id:'div', title:'Divisão', icon:'÷'},
+  {id:'expr', title:'Expressões', icon:'( )'}
+];
+
+const state = loadState() || {
+  student:null,
+  sessionId: cryptoRandom(),
+  startedAt:null,
+  currentModule:0,
+  currentQuestion:0,
+  moduleData:{},
+  eventLog:[],
+  finished:false
+};
+
+function cryptoRandom(){
+  if (window.crypto?.randomUUID) return crypto.randomUUID();
+  return 's_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+}
+function saveState(){ localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(state)); }
+function loadState(){ try{return JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY));}catch(e){return null;} }
+function resetState(){ localStorage.removeItem(CONFIG.STORAGE_KEY); location.reload(); }
+
+function fmt(n, min=1, max=2){
+  const val = Math.abs(n) < 1e-10 ? 0 : n;
+  return Number(val).toLocaleString('pt-BR',{minimumFractionDigits:min,maximumFractionDigits:max});
+}
+function parsePt(s){
+  if(typeof s!=='string') return Number(s);
+  const clean=s.trim().replace(/\s/g,'').replace(/\./g,'').replace(',','.');
+  return Number(clean);
+}
+function rint(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function round2(n){ return Math.round((n+Number.EPSILON)*100)/100; }
+function closeEnough(a,b){ return Number.isFinite(a) && Math.abs(a-b) < 0.005; }
+
+function syncEvent(type, payload={}){
+  const event={
+    type, at:new Date().toISOString(), appVersion:CONFIG.APP_VERSION,
+    sessionId:state.sessionId,
+    student:state.student || null,
+    ...payload
+  };
+  state.eventLog.push(event); saveState();
+  if(!CONFIG.REMOTE_ENDPOINT || CONFIG.REMOTE_ENDPOINT.startsWith('COLE_AQUI')) return;
+  try{
+    const iframeName='sync_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const iframe=document.createElement('iframe'); iframe.name=iframeName; iframe.style.display='none'; document.body.appendChild(iframe);
+    const form=document.createElement('form'); form.method='POST'; form.action=CONFIG.REMOTE_ENDPOINT; form.target=iframeName; form.style.display='none';
+    const inp=document.createElement('input'); inp.name='payload'; inp.value=JSON.stringify(event); form.appendChild(inp); document.body.appendChild(form);
+    form.submit();
+    setTimeout(()=>{form.remove();iframe.remove();},5000);
+  }catch(e){ console.warn('Falha de sincronização:',e); }
+}
+
+function overallProgress(){
+  let completed=0,total=MODULES.length*CONFIG.QUESTIONS_PER_MODULE;
+  MODULES.forEach(m=>{ completed += Math.min(state.moduleData[m.id]?.answered||0,CONFIG.QUESTIONS_PER_MODULE); });
+  return Math.round(completed/total*100);
+}
+function updateTopbar(){
+  const p=overallProgress();
+  document.getElementById('progressBar').style.width=p+'%';
+  document.getElementById('progressLabel').textContent=p+'% concluído';
+}
+function showTopbar(on=true){document.getElementById('topbar').classList.toggle('hidden',!on); if(on)updateTopbar();}
+
+function render(){
+  if(!state.student) return renderWelcome();
+  showTopbar(true);
+  if(state.finished) return renderFinal();
+  ensureModuleData(MODULES[state.currentModule].id);
+  renderModule();
+}
+
+function renderWelcome(){
+  showTopbar(false);
+  document.getElementById('app').innerHTML=`
+    <section class="card hero">
+      <div class="eyebrow">Recuperação de aprendizagem • Ensino Médio</div>
+      <h1>Missão<br><span style="color:var(--primary)">Decimal</span></h1>
+      <p>Treine as quatro operações com números decimais e avance até expressões numéricas. Você receberá dicas, correções e novas tentativas ao longo do caminho.</p>
+      <div class="grid grid-2" style="margin-top:24px">
+        <div class="field"><label for="studentName">Nome ou código do estudante</label><input id="studentName" autocomplete="name" placeholder="Ex.: A12 ou Maria S." maxlength="80"></div>
+        <div class="field"><label for="studentClass">Turma</label><input id="studentClass" placeholder="Ex.: 3ª A" maxlength="40"></div>
+      </div>
+      <div class="privacy small" style="margin-top:16px"><b>Privacidade:</b> use um código de estudante se não quiser registrar o nome completo. O aplicativo coleta apenas dados pedagógicos desta atividade.</div>
+      <div class="actions"><button class="btn" id="startBtn">Começar atividade</button></div>
+      <div class="module-list">
+        ${MODULES.map((m,i)=>`<div class="module"><div class="num">ETAPA ${i+1}</div><strong>${m.icon} ${m.title}</strong></div>`).join('')}
+      </div>
+    </section>`;
+  document.getElementById('startBtn').onclick=()=>{
+    const name=document.getElementById('studentName').value.trim();
+    const turma=document.getElementById('studentClass').value.trim();
+    if(!name||!turma){alert('Preencha o nome/código e a turma para começar.');return;}
+    state.student={name,turma}; state.startedAt=new Date().toISOString(); saveState();
+    syncEvent('session_start',{startedAt:state.startedAt,userAgent:navigator.userAgent}); render();
+  };
+}
+
+function ensureModuleData(id){
+  if(!state.moduleData[id]) state.moduleData[id]={answered:0,correct:0,attempts:0,hints:0,questions:[],current:null,lessonSeen:false};
+  const d=state.moduleData[id];
+  if(!d.current && d.answered<CONFIG.QUESTIONS_PER_MODULE) d.current=makeQuestion(id,d.answered);
+  saveState();
+}
+
+function moduleNav(){
+  return `<div class="module-list">${MODULES.map((m,i)=>{
+    const d=state.moduleData[m.id]; const done=d?.answered>=CONFIG.QUESTIONS_PER_MODULE;
+    const cls=i===state.currentModule?'active':done?'done':'';
+    return `<div class="module ${cls}"><div class="num">ETAPA ${i+1}</div><strong>${m.icon} ${m.title}</strong><div class="small muted" style="margin-top:6px">${done?'Concluída':i===state.currentModule?'Em andamento':'A seguir'}</div></div>`;
+  }).join('')}</div>`;
+}
+
+function renderModule(){
+  const mod=MODULES[state.currentModule], d=state.moduleData[mod.id];
+  const q=d.current;
+  document.getElementById('app').innerHTML=`
+    ${moduleNav()}
+    <section class="card" style="margin-top:18px">
+      <div class="lesson-head">
+        <div><span class="badge">${mod.icon} Etapa ${state.currentModule+1} de ${MODULES.length}</span><h2>${mod.title}</h2><div class="muted">${lessonSubtitle(mod.id)}</div></div>
+        <div class="pill-row"><span class="pill good">${d.correct} acertos</span><span class="pill">${d.attempts} tentativas</span><span class="pill">${d.hints} dicas</span></div>
+      </div>
+      ${lessonBlock(mod.id,d.lessonSeen)}
+      <div id="practice" class="question-card ${d.lessonSeen?'':'hidden'}">
+        <div class="eyebrow">Prática ${d.answered+1} de ${CONFIG.QUESTIONS_PER_MODULE}</div>
+        <div class="math">${q.prompt}</div>
+        ${q.kind==='choice'?choiceHtml(q):answerHtml(q)}
+        <div class="feedback" id="feedback"></div>
+        <div class="actions">
+          <button class="btn secondary" id="hintBtn">💡 Preciso de uma dica</button>
+          <button class="btn ghost" id="skipBtn">Trocar exercício</button>
+        </div>
+      </div>
+    </section>`;
+  bindLessonAndQuestion(mod.id,d,q);
+  updateTopbar();
+}
+
+function lessonSubtitle(id){return ({add:'Organize as casas decimais e some com segurança.',sub:'Alinhe as vírgulas e use reagrupamento quando necessário.',mul:'Multiplique e controle a posição da parte decimal.',div:'Transforme a divisão para facilitar o cálculo sem mudar o quociente.',expr:'Use a ordem correta das operações para resolver cada etapa.'})[id];}
+function lessonBlock(id,seen){
+  const blocks={
+    add:`<div class="tip"><strong>Ideia-chave</strong>Na adição, alinhe <b>vírgula com vírgula</b>. Você pode completar casas com zeros à direita.</div><div class="algorithm">  12,50\n+  3,27\n────────\n  15,77</div>`,
+    sub:`<div class="tip"><strong>Ideia-chave</strong>Na subtração, alinhe as casas decimais antes de começar. Complete com zero quando isso ajudar.</div><div class="algorithm">  15,20\n−  7,86\n────────\n   7,34</div>`,
+    mul:`<div class="tip"><strong>Ideia-chave</strong>Calcule o produto e depois observe quantas casas decimais aparecem nos fatores.</div><div class="algorithm">2,4 × 1,3\n24 × 13 = 312\n1 casa + 1 casa = 2 casas\nResultado: 3,12</div>`,
+    div:`<div class="tip"><strong>Ideia-chave</strong>Quando o divisor tem vírgula, multiplique dividendo e divisor pela mesma potência de 10,0 até o divisor ficar inteiro.</div><div class="algorithm">4,8 ÷ 0,6\n48,0 ÷ 6,0\nResultado: 8,0</div>`,
+    expr:`<div class="tip"><strong>Ordem das operações</strong>1) Parênteses. 2) Multiplicações e divisões. 3) Adições e subtrações. Operações da mesma prioridade seguem da esquerda para a direita.</div><div class="algorithm">12,5 + 2,5 × 4,0\n12,5 + 10,0\n22,5</div>`
+  };
+  return `<div id="lessonBlock" class="${seen?'hidden':''}">${blocks[id]}<div class="actions"><button class="btn" id="lessonDone">Entendi. Quero praticar</button></div></div>`;
+}
+function answerHtml(q){return `<div class="answer-row"><input id="answer" inputmode="decimal" autocomplete="off" placeholder="Digite sua resposta com vírgula"><button class="btn" id="checkBtn">Conferir</button></div><div class="small muted" style="margin-top:8px">Exemplo de formato: <span class="kbd">12,5</span></div>`;}
+function choiceHtml(q){return `<div class="choice-grid">${q.choices.map((c,i)=>`<button class="choice" data-i="${i}">${c}</button>`).join('')}</div>`;}
+
+function bindLessonAndQuestion(moduleId,d,q){
+  const lessonDone=document.getElementById('lessonDone');
+  if(lessonDone) lessonDone.onclick=()=>{d.lessonSeen=true;saveState();syncEvent('lesson_seen',{module:moduleId});renderModule();};
+  if(q.kind==='choice') document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>checkChoice(moduleId,d,q,Number(btn.dataset.i),btn));
+  else {
+    document.getElementById('checkBtn').onclick=()=>checkAnswer(moduleId,d,q);
+    document.getElementById('answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer(moduleId,d,q);});
+  }
+  document.getElementById('hintBtn').onclick=()=>showHint(moduleId,d,q);
+  document.getElementById('skipBtn').onclick=()=>{syncEvent('question_skipped',{module:moduleId,question:q.prompt});d.current=makeQuestion(moduleId,d.answered);saveState();renderModule();};
+}
+
+function showHint(moduleId,d,q){
+  d.hints++; q.hintLevel=(q.hintLevel||0)+1; saveState();
+  const hint=pickHint(q);
+  const fb=document.getElementById('feedback'); fb.className='feedback warn'; fb.textContent='💡 '+hint;
+  syncEvent('hint_used',{module:moduleId,question:q.prompt,hintLevel:q.hintLevel,hint});
+  updateTopbar();
+}
+function pickHint(q){
+  const i=Math.min((q.hintLevel||1)-1,q.hints.length-1); return q.hints[i];
+}
+
+function checkAnswer(moduleId,d,q){
+  const input=document.getElementById('answer'); const raw=input.value; const value=parsePt(raw); d.attempts++;
+  if(!Number.isFinite(value)) return feedback('Digite um número válido usando vírgula.', 'warn');
+  const ok=closeEnough(value,q.answer);
+  syncEvent('answer_attempt',{module:moduleId,question:q.prompt,studentAnswer:raw,correctAnswer:fmt(q.answer),correct:ok,attemptNumber:q.attempts+1});
+  q.attempts++;
+  if(ok){feedback('Correto! '+(q.explain||''),'ok'); finishQuestionSoon(moduleId,d,q,true);}
+  else{feedback(errorFeedback(q,value),'bad');saveState();}
+}
+function checkChoice(moduleId,d,q,idx,btn){
+  d.attempts++; const ok=idx===q.correctIndex; q.attempts++;
+  syncEvent('answer_attempt',{module:moduleId,question:q.prompt,studentAnswer:q.choices[idx],correctAnswer:q.choices[q.correctIndex],correct:ok,attemptNumber:q.attempts});
+  if(ok){document.querySelectorAll('.choice').forEach(b=>b.disabled=true);btn.style.borderColor='var(--ok)';feedback('Correto! '+q.explain,'ok');finishQuestionSoon(moduleId,d,q,true);}
+  else{btn.style.borderColor='var(--bad)';feedback(q.wrongFeedback||'Revise a ordem das operações e tente novamente.','bad');saveState();}
+}
+function feedback(text,type){const el=document.getElementById('feedback');el.className='feedback '+type;el.textContent=text;}
+function finishQuestionSoon(moduleId,d,q,correct){
+  if(correct)d.correct++; d.answered++; d.questions.push({prompt:q.prompt,answer:q.answer??q.choices?.[q.correctIndex],attempts:q.attempts,hints:q.hintLevel||0}); d.current=null; saveState();
+  syncEvent('question_complete',{module:moduleId,question:q.prompt,attempts:q.attempts,hints:q.hintLevel||0,correct:true,moduleAnswered:d.answered,moduleCorrect:d.correct});
+  setTimeout(()=>{
+    if(d.answered>=CONFIG.QUESTIONS_PER_MODULE){syncEvent('module_complete',{module:moduleId,correct:d.correct,attempts:d.attempts,hints:d.hints}); if(state.currentModule<MODULES.length-1){state.currentModule++;ensureModuleData(MODULES[state.currentModule].id);}else state.finished=true;saveState();}
+    render();
+  },900);
+}
+function errorFeedback(q,value){
+  if(q.errorRules){for(const rule of q.errorRules){if(rule.test(value)) return rule.message;}}
+  return pick(['Ainda não. Confira a posição da vírgula e tente novamente.','Revise o cálculo com calma e use uma estimativa para conferir.','Quase. Verifique a operação e tente outra vez.']);
+}
+
+function makeQuestion(id,index){
+  if(id==='add') return qAdd(index);
+  if(id==='sub') return qSub(index);
+  if(id==='mul') return qMul(index);
+  if(id==='div') return qDiv(index);
+  return qExpr(index);
+}
+function decimal1(minTenths,maxTenths){return rint(minTenths,maxTenths)/10;}
+function decimal2(minHund,maxHund){return rint(minHund,maxHund)/100;}
+
+function qAdd(index){
+  const a=index<2?decimal1(21,189):decimal2(205,1895); const b=index<2?decimal1(11,99):decimal2(115,995); const ans=round2(a+b);
+  return {kind:'input',prompt:`${fmt(a,index<2?1:2,2)} + ${fmt(b,index<2?1:2,2)}`,answer:ans,attempts:0,hintLevel:0,
+    hints:['Alinhe vírgula com vírgula.','Complete com zeros à direita se as casas decimais forem diferentes.','Some primeiro as casas mais à direita e avance para a esquerda.'],
+    explain:'As casas decimais foram somadas mantendo a vírgula alinhada.',
+    errorRules:[{test:v=>Math.abs(v-((a*10)+(b*10)))<.01,message:'Parece que a vírgula foi deslocada. Refaça mantendo vírgula embaixo de vírgula.'}]};
+}
+function qSub(index){
+  let a=index<2?decimal1(80,250):decimal2(1000,3000); let b=index<2?decimal1(11,79):decimal2(105,999); if(b>a)[a,b]=[b,a]; const ans=round2(a-b);
+  return {kind:'input',prompt:`${fmt(a,index<2?1:2,2)} − ${fmt(b,index<2?1:2,2)}`,answer:ans,attempts:0,hintLevel:0,
+    hints:['Alinhe vírgula com vírgula.','Se precisar, escreva um zero à direita para igualar as casas.','Subtraia da direita para a esquerda, reagrupando quando necessário.'],explain:'A subtração mantém as casas decimais alinhadas.'};
+}
+function qMul(index){
+  const a=index<3?decimal1(12,78):decimal2(115,695); const b=index<3?decimal1(11,49):decimal1(12,75); const ans=round2(a*b);
+  return {kind:'input',prompt:`${fmt(a,index<3?1:2,2)} × ${fmt(b,1,1)}`,answer:ans,attempts:0,hintLevel:0,
+    hints:['Faça uma estimativa do tamanho do resultado.','Conte quantas casas decimais aparecem nos dois fatores juntos.','Multiplique os algarismos e depois reposicione a parte decimal no produto.'],explain:'O produto foi conferido pela quantidade de casas decimais e por estimativa.'};
+}
+function qDiv(index){
+  // Gera quociente decimal controlado e divisão exata.
+  const divisor=decimal1(2,25); const quotient=index<3?decimal1(11,80):decimal2(105,950); const dividend=round2(divisor*quotient); const ans=round2(quotient);
+  return {kind:'input',prompt:`${fmt(dividend,1,2)} ÷ ${fmt(divisor,1,1)}`,answer:ans,attempts:0,hintLevel:0,
+    hints:['Observe se o divisor tem vírgula.','Você pode multiplicar dividendo e divisor pela mesma potência de 10,0.','Depois de transformar a divisão, confira se o quociente faz sentido por estimativa.'],explain:'A divisão foi construída para ter resultado decimal controlado.'};
+}
+function qExpr(index){
+  const templates=[
+    ()=>{const a=decimal1(50,150),b=decimal1(11,45),c=decimal1(20,50),mul=round2(b*c),ans=round2(a+mul);return exprChoice(`${fmt(a)} + ${fmt(b)} × ${fmt(c)}`,ans,`${fmt(b)} × ${fmt(c)}`,`Multiplicação vem antes da adição.`);},
+    ()=>{const b=decimal1(20,60),c=decimal1(20,50),div=round2(b/c);const a=round2(decimal1(100,250));const ans=round2(a-div);return exprInput(`${fmt(a)} − ${fmt(b)} ÷ ${fmt(c)}`,ans,'Faça primeiro a divisão.');},
+    ()=>{const a=decimal1(20,90),b=decimal1(10,60),c=decimal1(10,50),sum=round2(a+b),ans=round2(sum*c);return exprInput(`(${fmt(a)} + ${fmt(b)}) × ${fmt(c)}`,ans,'Resolva primeiro o que está dentro dos parênteses.');},
+    ()=>{const a=decimal1(100,250),b=decimal1(10,40),c=decimal1(10,50),mul=round2(b*c),ans=round2(a-mul);return exprInput(`${fmt(a)} − ${fmt(b)} × ${fmt(c)}`,ans,'Faça primeiro a multiplicação.');},
+    ()=>{const a=decimal1(80,180),b=decimal1(10,40),c=decimal1(10,30),d=decimal1(10,30),sum=round2(b+c),mul=round2(sum*d),ans=round2(a-mul);return exprInput(`${fmt(a)} − (${fmt(b)} + ${fmt(c)}) × ${fmt(d)}`,ans,'Parênteses primeiro; depois multiplicação; por último subtração.');}
+  ]; return templates[index%templates.length]();
+}
+function exprInput(prompt,answer,tip){return {kind:'input',prompt,answer,attempts:0,hintLevel:0,hints:['Identifique a operação que tem prioridade.',tip,'Resolva apenas uma etapa por vez e reescreva a expressão.'],explain:'A expressão foi resolvida respeitando a ordem das operações.'};}
+function exprChoice(prompt,answer,firstOp,explain){
+  const wrongs=['A operação mais à esquerda','A adição','A operação com maior número']; const correct=firstOp;
+  const choices=[correct,...wrongs].sort(()=>Math.random()-.5);return {kind:'choice',prompt:`${prompt}<div class="small muted" style="margin-top:12px">Qual operação deve ser realizada primeiro?</div>`,choices,correctIndex:choices.indexOf(correct),answer,attempts:0,hintLevel:0,hints:['Procure primeiro multiplicações ou divisões.','Adições e subtrações ficam para depois, salvo se estiverem em parênteses.'],explain,wrongFeedback:'Não é essa. Nesta expressão, a multiplicação tem prioridade.'};
+}
+
+function renderFinal(){
+  const totals=MODULES.map(m=>({m,d:state.moduleData[m.id]}));
+  const totalCorrect=totals.reduce((s,x)=>s+(x.d?.correct||0),0); const totalQs=MODULES.length*CONFIG.QUESTIONS_PER_MODULE;
+  const attempts=totals.reduce((s,x)=>s+(x.d?.attempts||0),0); const hints=totals.reduce((s,x)=>s+(x.d?.hints||0),0);
+  if(!state.finalSent){state.finalSent=true;saveState();syncEvent('session_complete',{startedAt:state.startedAt,finishedAt:new Date().toISOString(),totalCorrect,totalQuestions:totalQs,attempts,hints,modules:Object.fromEntries(totals.map(x=>[x.m.id,{correct:x.d?.correct||0,attempts:x.d?.attempts||0,hints:x.d?.hints||0}]))});}
+  document.getElementById('app').innerHTML=`
+    <section class="card hero">
+      <div class="eyebrow">Atividade concluída</div><h1 style="font-size:48px">Missão concluída</h1>
+      <p>${escapeHtml(state.student.name)}, seu percurso foi registrado. Veja um resumo da sessão.</p>
+      <div class="stats" style="margin-top:22px"><div class="stat"><b>${totalCorrect}/${totalQs}</b><small>questões concluídas com acerto</small></div><div class="stat"><b>${attempts}</b><small>tentativas realizadas</small></div><div class="stat"><b>${hints}</b><small>dicas utilizadas</small></div><div class="stat"><b>${Math.round(totalCorrect/totalQs*100)}%</b><small>aproveitamento por questão</small></div></div>
+      <h3 style="margin-top:28px">Desempenho por etapa</h3>
+      <table class="table"><thead><tr><th>Etapa</th><th>Acertos</th><th>Tentativas</th><th>Dicas</th></tr></thead><tbody>${totals.map(x=>`<tr><td>${x.m.title}</td><td>${x.d.correct}/${CONFIG.QUESTIONS_PER_MODULE}</td><td>${x.d.attempts}</td><td>${x.d.hints}</td></tr>`).join('')}</tbody></table>
+      <div class="actions"><button class="btn secondary" id="newSession">Nova sessão</button></div>
+      <div class="footer-note">Os dados ficam salvos neste navegador. Quando o endereço de coleta estiver configurado, os eventos também serão enviados para a planilha do professor.</div>
+    </section>`;
+  document.getElementById('newSession').onclick=resetState;updateTopbar();
+}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
+document.getElementById('restartBtn').onclick=()=>{if(confirm('Reiniciar toda a atividade neste dispositivo?'))resetState();};
+render();
+</script>
+</body>
+</html>
